@@ -16,7 +16,7 @@ end
 
 # ╔═╡ 60941eaa-1aea-11eb-1277-97b991548781
 begin 
-    using PlutoUI,HypertextLiteral, ExtendableGrids, VoronoiFVM, PlutoVista,GridVisualize,LinearAlgebra,JSON3,DifferentialEquations,Sundials
+    using PlutoUI,HypertextLiteral, ExtendableGrids, VoronoiFVM, PlutoVista,GridVisualize,LinearAlgebra,JSON3,JLD2,DifferentialEquations,Sundials
 	default_plotter!(PlutoVista);
 end
 
@@ -298,7 +298,7 @@ function bc_2d(y,u,node,data)
 		boundary_dirichlet!(y,u,node; species=1,value=data[2])
 		boundary_dirichlet!(y,u,node; species=2,value=data[3])
 	end
-end;
+end
 
 # ╔═╡ 6d54cd64-9913-46d1-813d-0200976dae8b
 function bc_3d(y,u,node,data)
@@ -313,7 +313,7 @@ function bc_3d(y,u,node,data)
 		boundary_dirichlet!(y,u,node; species=1,value=data[2])
 		boundary_dirichlet!(y,u,node; species=2,value=data[3])
 	end
-end;
+end
 
 # ╔═╡ d9b87f2e-590e-4731-b121-6229f210294f
 md"""
@@ -429,6 +429,7 @@ md"""
 """
 
 # ╔═╡ 6b78bd4e-bd25-4f37-b1b5-14784cc51ad7
+begin
 tsol,grid,tend,dim,system=bidomain(dim=1,
 		tend=50,
 		gridlength=70,
@@ -437,6 +438,12 @@ tsol,grid,tend,dim,system=bidomain(dim=1,
 		damp_grow=1.8,
 		data=["nm",0,0],
 		h_1d=0.07)
+
+jldsave("test.jld2"; tsol,grid,tend,dim,system)
+end
+
+# ╔═╡ dcfc5fb0-9358-4958-977c-648afb8fd2a0
+bibi=load("testoo.jld2", "tsol")
 
 # ╔═╡ b4aa3985-be2e-472f-94d8-0053375400f3
 md"""
@@ -570,6 +577,7 @@ DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 ExtendableGrids = "cfc395e8-590f-11e8-1f13-43a2532b2fa8"
 GridVisualize = "5eed8a63-0fb0-45eb-886d-8d5a387d12b8"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -582,6 +590,7 @@ DifferentialEquations = "~7.1.0"
 ExtendableGrids = "~0.9.5"
 GridVisualize = "~0.5.1"
 HypertextLiteral = "~0.9.3"
+JLD2 = "~0.4.22"
 JSON3 = "~1.9.4"
 PlutoUI = "~0.7.38"
 PlutoVista = "~0.8.13"
@@ -1953,6 +1962,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═59ee920b-22e3-457d-ac44-2cb9fe4c46d2
 # ╟─b08a77ba-96c9-49ee-b5f7-c152d6cba678
 # ╠═6b78bd4e-bd25-4f37-b1b5-14784cc51ad7
+# ╠═dcfc5fb0-9358-4958-977c-648afb8fd2a0
 # ╟─b4aa3985-be2e-472f-94d8-0053375400f3
 # ╠═9a378aed-bf36-46dc-8499-2405858394dc
 # ╟─d41a20c6-dac0-47b3-97c0-63a4bffba69c
