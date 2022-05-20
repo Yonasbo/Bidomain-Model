@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.3
+# v0.19.4
 
 using Markdown
 using InteractiveUtils
@@ -16,7 +16,7 @@ end
 
 # ╔═╡ 60941eaa-1aea-11eb-1277-97b991548781
 begin 
-    using PlutoUI,HypertextLiteral, ExtendableGrids, VoronoiFVM, PlutoVista,GridVisualize,LinearAlgebra,DifferentialEquations,Sundials
+    using PlutoUI,HypertextLiteral, ExtendableGrids, VoronoiFVM, PlutoVista,GridVisualize,LinearAlgebra,JSON3,DifferentialEquations,Sundials
 	default_plotter!(PlutoVista);
 end
 
@@ -225,8 +225,8 @@ end
 # ╔═╡ c0a55467-ce0d-4093-a87a-d88ac402c683
 function diffusion_2d(f,u,edge,data)
 	
-	σ_i=25*Matrix([ 0.263 0; 0 0.0263])
-	σ_e=25*Matrix([ 0.263 0; 0 0.1087])
+	σ_i=25*Diagonal([ 0.263, 0.0263])
+	σ_e=25*Diagonal([ 0.263, 0.1087])
 	vec_1=vec([edge[1,1] edge[2,1]])
 	vec_2=vec([edge[1,2] edge[2,2]])
 	
@@ -243,8 +243,8 @@ end
 # ╔═╡ 1cf82863-6529-4f05-a152-7415b0837041
 function diffusion_3d(f,u,edge,data)
 	
-	σ_i=25*Matrix([ 0.263 0 0; 0 0.0263 0; 0 0 0.0263])
-	σ_e=25*Matrix([ 0.263 0 0; 0 0.1087 0; 0 0 0.1087])
+	σ_i=25*Diagonal([ 0.263, 0.0263, 0.0263])
+	σ_e=25*Diagonal([ 0.263, 0.1087, 0.1087])
 	vec_1=vec([edge[1,1] edge[2,1] edge[3,1]])
 	vec_2=vec([edge[1,2] edge[2,2] edge[3,2]])
 	
@@ -330,19 +330,26 @@ function bidomain(;
 		damp_grow=1.8,
 		h_1d=0.007,
 		data=["nm",0,0],
-		h_2d=0.233) 
+		h_2d=0.233,
+		h_3d=1.4) 
 ### check for dimension to choose 1D or 2D grid,diffusion and boundary conditions.
 	if dim==1
 		X=0:h_1d:gridlength
 		grid=simplexgrid(X)
 		bc=bc_1d
 		diffu=diffusion
-	else
+	elseif dim==2
 		X=0:h_2d:gridlength
 		grid=simplexgrid(X,X)
 		bc=bc_2d
 		diffu=diffusion_2d
+	else
+		X=0:h_3d:gridlength
+		grid=simplexgrid(X,X,X)
+		bc=bc_3d
+		diffu=diffusion_3d
 	end
+	
 
 ### creation of the Voronoi System and the initial values matrix.
 	system=VoronoiFVM.System(grid,
@@ -367,7 +374,7 @@ function bidomain(;
 			inival[3,i]=1/γ*(β+((10^(1/2)-3)^(2/3)-1)/((10)^(1/2)-3)^(1/3))
 			inival[2,i]=0.0	
 		end
-	else
+	elseif dim==2
 		for i=1:size(inival,2)
 			
 			if coord[1,i]<=gridlength/20
@@ -383,6 +390,22 @@ function bidomain(;
 			inival[2,i]=0.0
 				
 		end
+	elseif dim==3
+		for i=1:size(inival,2)
+			
+			if coord[1,i]<=gridlength/20
+				inival[1,i]=2.0
+			else
+				inival[1,i]=((10^(1/2)-3)^(2/3)-1)/((10)^(1/2)-3)^(1/3)
+			end
+			if 31<=coord[1,i]<=39 && coord[2,i]<=35
+				inival[3,i]=2.0
+			else
+				inival[3,i]=1/γ*(β+((10^(1/2)-3)^(2/3)-1)/((10)^(1/2)-3)^(1/3))
+			end
+			inival[2,i]=0.0
+				
+		end	
 	end
 
 ### initializing SolverControl and solving the VoronoiFVM system	
@@ -450,18 +473,23 @@ md"""
 """
 
 # ╔═╡ 727dd44f-2145-47de-a7e0-024704b4f04e
+# ╠═╡ disabled = true
+#=╠═╡
 tsol_2d,grid_2d,tend_2d,dim_2d,system_2d=bidomain(dim=2,
 		tend=50,
 		gridlength=70,
 		tstep=1.0e-3,
 		damp=0.5,
 		damp_grow=1.8,
-		h_2d=0.233)
+		h_2d=0.466)
+  ╠═╡ =#
 
 # ╔═╡ f98c536d-4f9d-4b52-8bbd-8c1b38e497a8
+#=╠═╡
 md"""
 t 2D=$(@bind t_2d Slider(0:tend_2d/1000:tend_2d,show_value=true))
 """
+  ╠═╡ =#
 
 # ╔═╡ 7fe94a1c-602b-431e-95ff-b7cbb6bac814
 md"""
@@ -484,16 +512,24 @@ end
 
 
 # ╔═╡ 57aa2c61-d8d6-4237-8e2e-94426b3c64d5
+#=╠═╡
 sol_2d=tsol_2d(t_2d)
+  ╠═╡ =#
 
 # ╔═╡ 9033201c-4bc2-4fc8-a3ee-2829f2cde5fa
+#=╠═╡
 vis_2d=GridVisualizer(layout=(1,1);size=(700,350),dim=dim_2d,legend=:lt)
+  ╠═╡ =#
 
 # ╔═╡ e79a02cd-7fdc-41f5-a5fe-1e5fa368650d
+#=╠═╡
 scalarplot!(vis_2d,grid_2d,sol_2d[spec,:],limits=(-2,2),show=true,label="2D Grid",linestyle=:line,color=:blue)
+  ╠═╡ =#
 
 # ╔═╡ 964beb31-1fb9-4a21-81db-7f8ad566b430
+#=╠═╡
 tsol_2d;history_summary(system_2d)
+  ╠═╡ =#
 
 # ╔═╡ d99e4ffd-f023-4e48-af8b-34d9cd49e63f
 begin
@@ -534,6 +570,7 @@ DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 ExtendableGrids = "cfc395e8-590f-11e8-1f13-43a2532b2fa8"
 GridVisualize = "5eed8a63-0fb0-45eb-886d-8d5a387d12b8"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 PlutoVista = "646e1f28-b900-46d7-9d87-d554eb38a413"
@@ -545,6 +582,7 @@ DifferentialEquations = "~7.1.0"
 ExtendableGrids = "~0.9.5"
 GridVisualize = "~0.5.1"
 HypertextLiteral = "~0.9.3"
+JSON3 = "~1.9.4"
 PlutoUI = "~0.7.38"
 PlutoVista = "~0.8.13"
 Sundials = "~4.9.3"
@@ -1147,6 +1185,12 @@ git-tree-sha1 = "3c837543ddb02250ef42f4738347454f95079d4e"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.3"
 
+[[deps.JSON3]]
+deps = ["Dates", "Mmap", "Parsers", "StructTypes", "UUIDs"]
+git-tree-sha1 = "8c1f668b24d999fb47baf80436194fdccec65ad2"
+uuid = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+version = "1.9.4"
+
 [[deps.KLU]]
 deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse_jll"]
 git-tree-sha1 = "cae5e3dfd89b209e01bcd65b3a25e74462c67ee0"
@@ -1693,6 +1737,12 @@ deps = ["Adapt", "DataAPI", "StaticArrays", "Tables"]
 git-tree-sha1 = "e75d82493681dfd884a357952bbd7ab0608e1dc3"
 uuid = "09ab397b-f2b6-538f-b94a-2f83cf4a842a"
 version = "0.6.7"
+
+[[deps.StructTypes]]
+deps = ["Dates", "UUIDs"]
+git-tree-sha1 = "d24a825a95a6d98c385001212dc9020d609f2d4f"
+uuid = "856f2bd8-1eba-4b0a-8007-ebc267875bd4"
+version = "1.8.1"
 
 [[deps.SuiteSparse]]
 deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
