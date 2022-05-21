@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.3
+# v0.19.4
 
 using Markdown
 using InteractiveUtils
@@ -16,7 +16,7 @@ end
 
 # ╔═╡ 60941eaa-1aea-11eb-1277-97b991548781
 begin 
-    using PlutoUI,HypertextLiteral, ExtendableGrids, VoronoiFVM, PlutoVista,GridVisualize,LinearAlgebra,DifferentialEquations,Sundials
+    using PlutoUI,HypertextLiteral, ExtendableGrids, VoronoiFVM, PlutoVista,GridVisualize,LinearAlgebra,JLD2,DifferentialEquations,Sundials
 	default_plotter!(PlutoVista);
 end
 
@@ -211,6 +211,25 @@ function bc_2d(y,u,node)
 	boundary_neumann!(y,u,node; species=3,value=0)
 end;
 
+# ╔═╡ 6b78bd4e-bd25-4f37-b1b5-14784cc51ad7
+# ╠═╡ disabled = true
+#=╠═╡
+#tsol,grid,tend,dim,system=bidomain(dim=2,
+		tend=60,
+		gridlength=70,
+		tstep=1.0e-2,
+		damp=.5,
+		damp_grow=1.8,
+		h_1d=0.07,
+		h_2d=0.233)
+  ╠═╡ =#
+
+# ╔═╡ 24e70e75-94cb-4582-b516-616cc7242291
+# ╠═╡ disabled = true
+#=╠═╡
+system
+  ╠═╡ =#
+
 # ╔═╡ 0f6a9821-8b62-47f7-a9ff-a9aa1c56b052
 #gridplot(grid,resolution=(600,400),linewidth=0.5,legend=:lt)
 
@@ -310,18 +329,19 @@ function bidomain(;
 	return tsol,grid,tend,dim,system
 end
 
-# ╔═╡ 6b78bd4e-bd25-4f37-b1b5-14784cc51ad7
-tsol,grid,tend,dim,system=bidomain(dim=2,
-		tend=60,
-		gridlength=70,
-		tstep=1.0e-2,
-		damp=.5,
-		damp_grow=1.8,
-		h_1d=0.07,
-		h_2d=0.233)
+# ╔═╡ c0c3e415-2c79-4bfb-80f7-f328b7c6bd44
+pellipse(2,4,45.0)
 
-# ╔═╡ 24e70e75-94cb-4582-b516-616cc7242291
-system
+# ╔═╡ 7d114eed-37fc-4e94-899e-8fbf3ca50263
+angle(vec([-1 0]),vec([1 0]))
+
+# ╔═╡ 78281c70-42c2-4e58-826c-295e7fb16406
+begin
+	dim=load("testoo.jld2", "dim_2d")
+	tsol=load("testoo.jld2", "tsol_2d")
+	tend=load("testoo.jld2", "tend_2d")
+	grid=load("testoo.jld2", "grid_2d")
+end
 
 # ╔═╡ b4aa3985-be2e-472f-94d8-0053375400f3
 md"""
@@ -361,12 +381,6 @@ end
 # ╔═╡ 8081c60a-b67c-4346-8094-6746e9b12e76
 tsol;history_summary(system)
 
-# ╔═╡ c0c3e415-2c79-4bfb-80f7-f328b7c6bd44
-pellipse(2,4,45.0)
-
-# ╔═╡ 7d114eed-37fc-4e94-899e-8fbf3ca50263
-angle(vec([-1 0]),vec([1 0]))
-
 # ╔═╡ 1de1f689-4de9-4d49-8cd3-aeaf4be5ccea
 html"<hr>"
 
@@ -397,6 +411,7 @@ DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 ExtendableGrids = "cfc395e8-590f-11e8-1f13-43a2532b2fa8"
 GridVisualize = "5eed8a63-0fb0-45eb-886d-8d5a387d12b8"
 HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 PlutoVista = "646e1f28-b900-46d7-9d87-d554eb38a413"
@@ -408,6 +423,7 @@ DifferentialEquations = "~7.1.0"
 ExtendableGrids = "~0.9.5"
 GridVisualize = "~0.5.1"
 HypertextLiteral = "~0.9.3"
+JLD2 = "~0.4.22"
 PlutoUI = "~0.7.38"
 PlutoVista = "~0.8.13"
 Sundials = "~4.9.3"
@@ -1740,6 +1756,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═0b6dc297-ee44-4648-acd0-60f543569c2b
 # ╠═c0c3e415-2c79-4bfb-80f7-f328b7c6bd44
 # ╠═7d114eed-37fc-4e94-899e-8fbf3ca50263
+# ╠═78281c70-42c2-4e58-826c-295e7fb16406
 # ╟─1de1f689-4de9-4d49-8cd3-aeaf4be5ccea
 # ╟─5da7074e-19bd-4cc6-aa30-3bf597f4a631
 # ╟─00000000-0000-0000-0000-000000000001

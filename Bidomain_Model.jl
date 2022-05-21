@@ -538,14 +538,15 @@ scalarplot!(vis_2d,grid_2d,sol_2d[spec,:],limits=(-2,2),show=true,label="2D Grid
 tsol_2d;history_summary(system_2d)
   ╠═╡ =#
 
-# ╔═╡ d99e4ffd-f023-4e48-af8b-34d9cd49e63f
-begin
-	X=0:1.4:70
-	grid_3d=simplexgrid(X,X,X)
-end
-
-# ╔═╡ 1893113c-2bbb-4f80-9269-6c6ab1369d8a
-gridplot(grid_3d,resolution=(600,400),linewidth=0.5,legend=:lt)
+# ╔═╡ 4960ae3c-68d7-4564-a533-23fccefac619
+tsol_3d,grid_3d,tend_3d,dim_3d,system_3d=bidomain(dim=3,
+		tend=20,
+		gridlength=70,
+		tstep=1.0e-2,
+		damp=0.5,
+		damp_grow=1.8,
+		data=["nm",0,0],
+		h_3d=1.4)
 
 # ╔═╡ 1de1f689-4de9-4d49-8cd3-aeaf4be5ccea
 html"<hr>"
@@ -1981,8 +1982,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═9033201c-4bc2-4fc8-a3ee-2829f2cde5fa
 # ╠═e79a02cd-7fdc-41f5-a5fe-1e5fa368650d
 # ╠═964beb31-1fb9-4a21-81db-7f8ad566b430
-# ╠═d99e4ffd-f023-4e48-af8b-34d9cd49e63f
-# ╠═1893113c-2bbb-4f80-9269-6c6ab1369d8a
+# ╠═4960ae3c-68d7-4564-a533-23fccefac619
 # ╟─1de1f689-4de9-4d49-8cd3-aeaf4be5ccea
 # ╟─5da7074e-19bd-4cc6-aa30-3bf597f4a631
 # ╟─00000000-0000-0000-0000-000000000001
