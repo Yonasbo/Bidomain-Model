@@ -548,6 +548,20 @@ tsol_3d,grid_3d,tend_3d,dim_3d,system_3d=bidomain(dim=3,
 		data=["nm",0,0],
 		h_3d=1.4)
 
+# ╔═╡ 7db43261-ce19-4666-a8f1-3ccfbb69f610
+vis_3d=GridVisualizer(layout=(1,1);size=(700,350),dim=dim_3d,legend=:lt)
+
+# ╔═╡ 14ed1150-d4e7-4faf-93c3-c0e23682106e
+md"""
+t 3D=$(@bind t_3d Slider(0:tend_3d/1000:tend_3d,show_value=true))
+"""
+
+# ╔═╡ b47c3692-d67c-4161-8073-993be1850e5f
+sol_3d=tsol_3d(t_3d)
+
+# ╔═╡ e2c472ca-b117-4496-bfb2-8f229931b079
+scalarplot!(vis_3d,grid_3d,sol_3d[spec,:],limits=(-2,2),show=true,label="3D Grid",color=:blue)
+
 # ╔═╡ 1de1f689-4de9-4d49-8cd3-aeaf4be5ccea
 html"<hr>"
 
@@ -1974,15 +1988,19 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═8081c60a-b67c-4346-8094-6746e9b12e76
 # ╟─714a908b-b0d2-4b7e-b99a-2b38c2feace0
 # ╠═727dd44f-2145-47de-a7e0-024704b4f04e
-# ╟─f98c536d-4f9d-4b52-8bbd-8c1b38e497a8
+# ╠═f98c536d-4f9d-4b52-8bbd-8c1b38e497a8
 # ╟─7fe94a1c-602b-431e-95ff-b7cbb6bac814
 # ╟─0770bc4e-af0d-4e72-8d2f-9d700d3728b6
 # ╟─1588044c-319a-4da8-afca-293562496c0f
-# ╟─57aa2c61-d8d6-4237-8e2e-94426b3c64d5
+# ╠═57aa2c61-d8d6-4237-8e2e-94426b3c64d5
 # ╠═9033201c-4bc2-4fc8-a3ee-2829f2cde5fa
 # ╠═e79a02cd-7fdc-41f5-a5fe-1e5fa368650d
 # ╠═964beb31-1fb9-4a21-81db-7f8ad566b430
 # ╠═4960ae3c-68d7-4564-a533-23fccefac619
+# ╠═7db43261-ce19-4666-a8f1-3ccfbb69f610
+# ╠═e2c472ca-b117-4496-bfb2-8f229931b079
+# ╟─14ed1150-d4e7-4faf-93c3-c0e23682106e
+# ╟─b47c3692-d67c-4161-8073-993be1850e5f
 # ╟─1de1f689-4de9-4d49-8cd3-aeaf4be5ccea
 # ╟─5da7074e-19bd-4cc6-aa30-3bf597f4a631
 # ╟─00000000-0000-0000-0000-000000000001

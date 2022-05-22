@@ -337,10 +337,10 @@ angle(vec([-1 0]),vec([1 0]))
 
 # ╔═╡ 78281c70-42c2-4e58-826c-295e7fb16406
 begin
-	dim=load("testoo.jld2", "dim_2d")
-	tsol=load("testoo.jld2", "tsol_2d")
-	tend=load("testoo.jld2", "tend_2d")
-	grid=load("testoo.jld2", "grid_2d")
+	dim=load("test.jld2", "dim")
+	tsol=load("test.jld2", "tsol")
+	tend=load("test.jld2", "tend")
+	grid=load("test.jld2", "grid")
 end
 
 # ╔═╡ b4aa3985-be2e-472f-94d8-0053375400f3
@@ -355,22 +355,22 @@ vis=GridVisualizer(layout=(1,1);size=(700,350),dim=dim,legend=:lt)
 sol=tsol(t)
 
 # ╔═╡ 0c1d9ae2-e782-432a-9e20-ea877fa7546f
-sol[3,2001]
+sol[3,501]
 
 # ╔═╡ 8193ce62-d530-49cb-8b13-6711631e7268
 scalarplot!(vis,grid,sol[1,:],limits=(-2,2),show=true,label="u",linestyle=:line,color=:blue)
 
+# ╔═╡ fe8e76b7-8cfc-4de9-af3d-24cdc81fa5ab
+scalarplot!(vis,grid,sol[2,:],limits=(-2,2),show=true,clear=false,color=:red, label="v",linestyle=:dash)
+
+# ╔═╡ e0bce0cf-e991-4c35-b77f-3d891e09b00e
+scalarplot!(vis,grid,sol[3,:],limits=(-2,2),show=true,clear=false,color=:green,label="u_e",linestyle=:dot)
+
 # ╔═╡ 9033201c-4bc2-4fc8-a3ee-2829f2cde5fa
 vis_ue=GridVisualizer(layout=(1,1);size=(700,350),dim=dim,legend=:lt)
 
-# ╔═╡ fe8e76b7-8cfc-4de9-af3d-24cdc81fa5ab
-scalarplot!(vis_ue,grid,sol[2,:],limits=(-2,2),show=true,clear=false,color=:red, label="v",linestyle=:dash)
-
 # ╔═╡ 79e2728f-d163-4e57-9fb1-60e288620e85
 vis_v=GridVisualizer(layout=(1,1);size=(700,350),dim=dim,legend=:lt)
-
-# ╔═╡ e0bce0cf-e991-4c35-b77f-3d891e09b00e
-scalarplot!(vis_v,grid,sol[3,:],limits=(-2,2),show=true,clear=false,color=:green,label="u_e",linestyle=:dot)
 
 # ╔═╡ aa65ab7a-5057-4bbb-8864-9088688d13c0
 let 
