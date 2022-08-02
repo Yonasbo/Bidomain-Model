@@ -20,3 +20,6 @@ g(u,v)&=u+\beta -\gamma v.
 \end{aligned}
 ```
 where $\gamma$ is a parameter controlling the ion transport and $\beta$ represents the cell excitability.
+
+
+The Julia file is written for/in Pluto.jl.
